@@ -91,3 +91,24 @@ fn get_by_selector(document: &Html, selector: &str) -> String {
 
     result.trim().to_string()
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::get_by_selector;
+    use scraper::Html;
+
+    #[test]
+    fn test_get_by_selector() {
+        let html = r#"
+        <ul>
+            <li>First</li>
+            <li>Second</li>
+            <li>Third</li>
+        </ul>
+        "#;
+        let fragment = Html::parse_fragment(html);
+        let first_li_selector = "li:first-of-type";
+
+        assert_eq!("First", get_by_selector(&fragment, first_li_selector))
+    }
+}
