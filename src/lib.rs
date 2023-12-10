@@ -1,5 +1,3 @@
-use std::io;
-
 use colored::Colorize;
 use reqwest::Error;
 use scraper::{Html, Selector};
@@ -29,25 +27,7 @@ impl Status {
     }
 }
 
-pub fn run() {
-    loop {
-        println!("Status code (or 'q' to quit): ");
-
-        let mut status_code = String::new();
-
-        io::stdin()
-            .read_line(&mut status_code)
-            .expect("Failed to read status code");
-
-        if status_code.trim().eq_ignore_ascii_case("q") {
-            break;
-        }
-
-        display_info(&status_code);
-    }
-}
-
-fn display_info(status_code: &String) {
+pub fn display_info(status_code: &String) {
     let status = create_status(&status_code);
 
     match status {
