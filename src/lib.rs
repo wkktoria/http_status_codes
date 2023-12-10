@@ -45,7 +45,7 @@ fn create_status(status_code: &String) -> Result<Status, &'static str> {
             if status_exists(&s) {
                 Ok(get_document(&s))
             } else {
-                Err("Status code doesn't exist")
+                Err("Status code doesn't exist!")
             }
         }
         Err(_) => Err("Failed to get document."),
