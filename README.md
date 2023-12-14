@@ -4,14 +4,9 @@ Tool which prints information about specified HTTP status code in terminal.
 
 ## Usage
 
-- print information about specified HTTP status code:
-
-    `cargo run -- [status code]`
-- print information about few HTTP status codes:
-
-    `cargo run -- [status code] [status code] ...`
-
-Program will ask about status code when ran without any command line argument.
+- print information about HTTP response status codes:
+    1. with cargo: `cargo run -- --codes <CODES>`
+    2. with executable file: `./http_status_codes --codes <CODES>`
 
 ## Resources
 
