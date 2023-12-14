@@ -45,7 +45,7 @@ fn create_status(status_code: &String) -> Result<HttpStatusCode, &'static str> {
             if status_exists(&s) {
                 Ok(get_html(&s))
             } else {
-                Err("Supplied status code doesn't exist!")
+                Err("Supplied http status code doesn't exist!")
             }
         }
         Err(_) => Err("Failed to get html document."),
