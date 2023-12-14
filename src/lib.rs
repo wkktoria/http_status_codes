@@ -5,22 +5,22 @@ use scraper::{Html, Selector};
 const DESCRIPTION_URL: &str = "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status";
 const IMAGE_URL: &str = "https://http.dog";
 
-const NAME_SELECTOR: &str = "header>h1";
+const CODE_SELECTOR: &str = "header>h1";
 const DESCRIPTION_SELECTOR: &str = "div.section-content>p:first-of-type";
 
-const NON_EXISTING_STATUS_TEXT_CONTENT: &str = "Page not found";
+const NON_EXISTING_STATUS_TEXT: &str = "Page not found";
 
-struct Status {
-    name: String,
+struct HttpStatusCode {
+    code: String,
     description: String,
     image_link: String,
 }
 
-impl Status {
+impl HttpStatusCode {
     fn print_info(&self) {
         println!(
             "\n{}\n\n{}\nLink to image: {}\n",
-            self.name.green(),
+            self.code.green(),
             self.description,
             self.image_link.blue()
         );
@@ -36,28 +36,28 @@ pub fn display_info(status_code: &String) {
     }
 }
 
-fn create_status(status_code: &String) -> Result<Status, &'static str> {
+fn create_status(status_code: &String) -> Result<HttpStatusCode, &'static str> {
     let url = format!("{}/{}", DESCRIPTION_URL, &status_code);
-    let html = get_html(&url);
+    let response_text = get_response_text(&url);
 
-    let document: Result<Html, &'static str> = match html {
+    let html: Result<Html, &'static str> = match response_text {
         Ok(s) => {
             if status_exists(&s) {
-                Ok(get_document(&s))
+                Ok(get_html(&s))
             } else {
-                Err("Status code doesn't exist!")
+                Err("Supplied status code doesn't exist!")
             }
         }
-        Err(_) => Err("Failed to get document."),
+        Err(_) => Err("Failed to get html document."),
     };
 
-    match document {
+    match html {
         Ok(h) => {
-            let name = get_by_selector(&h, &NAME_SELECTOR);
+            let code = get_by_selector(&h, &CODE_SELECTOR);
             let description = get_by_selector(&h, &DESCRIPTION_SELECTOR);
 
-            Ok(Status {
-                name: name,
+            Ok(HttpStatusCode {
+                code,
                 description: description,
                 image_link: format!("{}/{}.jpg", IMAGE_URL, &status_code.trim())
                     .trim()
@@ -68,17 +68,17 @@ fn create_status(status_code: &String) -> Result<Status, &'static str> {
     }
 }
 
-fn get_html(url: &String) -> Result<String, Error> {
+fn get_response_text(url: &String) -> Result<String, Error> {
     let response = reqwest::blocking::get(url)?;
     response.text()
 }
 
-fn get_document(html: &String) -> Html {
+fn get_html(html: &String) -> Html {
     Html::parse_document(html)
 }
 
 fn status_exists(text_content: &String) -> bool {
-    !text_content.contains(&NON_EXISTING_STATUS_TEXT_CONTENT)
+    !text_content.contains(&NON_EXISTING_STATUS_TEXT)
 }
 
 fn get_by_selector(document: &Html, selector: &str) -> String {
